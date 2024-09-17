@@ -2,10 +2,72 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { SelectBudgetOptions, SelectTravelList } from "@/contents/options";
 import { useState } from "react";
+import axios from "axios";
 
 const CreateTrip = () => {
   const [place, setPlace] = useState("");
-  const [day, setDay] = useState("");
+  const [day, setDay] = useState(0);
+  const [people, setPeople] = useState({});
+  const [budget, setBudget] = useState({});
+  const [error, setError] = useState("");
+  const [suggestions, setSuggestions] = useState([]); // For storing location suggestions
+  const [selectedPlace, setSelectedPlace] = useState(null); // For storing the selected place
+
+  // Handle input change and fetch location suggestions
+  const handlePlaceChange = async (e) => {
+    const input = e.target.value;
+    setPlace(input);
+
+    if (input.length > 2) {
+      // Fetch suggestions from Nominatim API
+      try {
+        const response = await axios.get(
+          `https://nominatim.openstreetmap.org/search?q=${input}&format=json&limit=5`
+        );
+        setSuggestions(response.data);
+      } catch (error) {
+        console.log("Error fetching location suggestions:", error);
+      }
+    } else {
+      setSuggestions([]); // Clear suggestions if input length is less than 3
+    }
+  };
+
+  // Handle selecting a place from the suggestions
+  const handleSelectSuggestion = (suggestion) => {
+    setSelectedPlace(suggestion.display_name);
+    setPlace(suggestion.display_name);
+    setSuggestions([]); // Clear suggestions after selection
+  };
+
+  const handleTripData = () => {
+    if (!selectedPlace) {
+      return setError("Please select a valid destination.");
+    }
+    if (day > 7 || day < 1) {
+      return setError("Please select a valid number of days (1 to 7).");
+    }
+    if (!people.id) {
+      return setError("Please select who you will be traveling with.");
+    }
+    if (!budget.id) {
+      return setError("Please select a budget.");
+    }
+
+    // If all validations pass
+    generateTrip();
+  };
+
+  const generateTrip = () => {
+    const tripObj = {
+      location: selectedPlace,
+      days: day,
+      travelers: people.people,
+      budget: budget.title,
+    };
+    console.log(tripObj);
+  };
+
   return (
     <div className="p-3">
       <div className="w-full md:w-8/12 m-auto py-5">
@@ -18,11 +80,10 @@ const CreateTrip = () => {
             generate a customized itinerary based on your preferences.
           </p>
         </div>
-
-        <div className="mt-24">
-          <div className="pt-10">
+        <div className="mt-16">
+          <div className="pt-10 relative">
             <h2 className="text-xl my-3 font-semibold">
-              What is destination of choice?
+              What is your destination of choice?
             </h2>
 
             <Input
@@ -30,8 +91,23 @@ const CreateTrip = () => {
               placeholder="Type your destination here..."
               className="border-2"
               value={place}
-              onChange={(e) => setPlace(e.target.value)}
+              onChange={handlePlaceChange}
             />
+
+            {/* Suggestion Dropdown */}
+            {suggestions.length > 0 && (
+              <ul className="absolute bg-white border mt-1 w-full z-10 shadow-md">
+                {suggestions.map((suggestion, index) => (
+                  <li
+                    key={index}
+                    className="p-2 cursor-pointer hover:bg-gray-100"
+                    onClick={() => handleSelectSuggestion(suggestion)}
+                  >
+                    {suggestion.display_name}
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
 
           <div className="pt-5">
@@ -44,7 +120,7 @@ const CreateTrip = () => {
               placeholder="Type trip day.."
               className="border-2"
               value={day}
-              onChange={(e) => setDay(e.target.value)}
+              onChange={(e) => setDay(Number(e.target.value))}
             />
           </div>
 
@@ -54,7 +130,10 @@ const CreateTrip = () => {
               {SelectBudgetOptions.map((option) => (
                 <div
                   key={option.id}
-                  className="bg-white shadow-md p-6 rounded-sm border-2 hover:border-gray-800"
+                  className={`bg-white shadow-md p-6 rounded-sm border-2 hover:border-gray-800 ${
+                    option.id === budget?.id ? "border-gray-800" : ""
+                  }`}
+                  onClick={() => setBudget(option)}
                 >
                   <span className="text-2xl">{option.icon}</span>
                   <h2 className="text-xl font-semibold my-2">{option.title}</h2>
@@ -72,7 +151,10 @@ const CreateTrip = () => {
               {SelectTravelList.map((option) => (
                 <div
                   key={option.id}
-                  className="bg-white shadow-md p-6 rounded-sm border-2 hover:border-gray-800"
+                  onClick={() => setPeople(option)}
+                  className={`bg-white shadow-md p-6 rounded-sm border-2 hover:border-gray-800 ${
+                    option.id === people?.id ? "border-gray-800" : ""
+                  }`}
                 >
                   <span className="text-2xl">{option.icon}</span>
                   <h2 className="text-xl font-semibold my-2">{option.title}</h2>
@@ -82,11 +164,9 @@ const CreateTrip = () => {
             </div>
           </div>
 
-        <div className="flex justify-end pt-10">
-          <Button >
-            Generate Trip
-          </Button>
-        </div>
+          <div className="flex justify-end pt-10">
+            <Button onClick={handleTripData}>Generate Trip</Button>
+          </div>
         </div>
       </div>
     </div>
