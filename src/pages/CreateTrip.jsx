@@ -1,3 +1,4 @@
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -5,12 +6,13 @@ import {
   SelectBudgetOptions,
   SelectTravelList,
 } from "@/contents/options";
-import { useState } from "react";
 import axios from "axios";
 import { toast } from "sonner";
 import { chatSession } from "@/services/AiModel";
 import DialogPopup from "@/components/custom/Dialog";
 import { useGoogleLogin } from "@react-oauth/google";
+import Header from "@/components/custom/Header";
+
 
 const CreateTrip = () => {
   const [dialog, setDialog] = useState(false);
@@ -18,16 +20,13 @@ const CreateTrip = () => {
   const [day, setDay] = useState(0);
   const [people, setPeople] = useState({});
   const [budget, setBudget] = useState({});
-  const [suggestions, setSuggestions] = useState([]); // For storing location suggestions
-  const [selectedPlace, setSelectedPlace] = useState(place); // For storing the selected place
+  const [suggestions, setSuggestions] = useState([]);
+  const [selectedPlace, setSelectedPlace] = useState(place);
 
-  // Handle input change and fetch location suggestions
   const handlePlaceChange = async (e) => {
     const input = e.target.value;
     setPlace(input);
-
     if (input.length > 2) {
-      // Fetch suggestions from Nominatim API
       try {
         const response = await axios.get(
           `https://nominatim.openstreetmap.org/search?q=${input}&format=json&limit=5`
@@ -37,15 +36,14 @@ const CreateTrip = () => {
         console.log("Error fetching location suggestions:", error);
       }
     } else {
-      setSuggestions([]); // Clear suggestions if input length is less than 3
+      setSuggestions([]);
     }
   };
 
-  // Handle selecting a place from the suggestions
   const handleSelectSuggestion = (suggestion) => {
     setSelectedPlace(suggestion.display_name);
     setPlace(suggestion.display_name);
-    setSuggestions([]); // Clear suggestions after selection
+    setSuggestions([]);
   };
 
   const handleTripData = () => {
@@ -61,41 +59,37 @@ const CreateTrip = () => {
     if (!budget.id) {
       return toast("Please select a budget.");
     }
-
-    // If all validations pass
     generateTrip();
   };
 
-  // Login User
   const login = useGoogleLogin({
     clientId: import.meta.env.VITE_GOOGLE_AUTH_CLIENT_ID,
     onSuccess: (codeRes) => {
-      getUserProfile(codeRes)
+      getUserProfile(codeRes);
     },
     onError: (error) => {
       console.log(error);
     },
   });
 
-  // Get User Info
   const getUserProfile = (tokenInfo) => {
     axios
       .get(
         `https://www.googleapis.com/oauth2/v1/userinfo?access_token=${tokenInfo?.access_token}`,
         {
           headers: {
-            Authorization: "Bearer ${tokenInfo?.access_token}",
+            Authorization: `Bearer ${tokenInfo?.access_token}`,
             Accept: "Application/json",
           },
         }
       )
       .then((res) => {
-        localStorage.setItem("user",JSON.stringify(res.data))
-        generateTrip()
-        setDialog(false)
+        localStorage.setItem("user", JSON.stringify(res.data));
+        generateTrip();
+        setDialog(false);
       });
   };
-  // generate trip
+
   const generateTrip = async () => {
     let user = localStorage.getItem("user");
     if (!user) {
@@ -108,114 +102,128 @@ const CreateTrip = () => {
       .replace("{traveler}", people?.people)
       .replace("{budget}", budget?.title)
       .replace("{day}", day);
-    const response = await chatSession.sendMessage(finalPrompt);
 
+    const response = await chatSession.sendMessage(finalPrompt);
     console.log(JSON.parse(response?.response?.text()));
   };
 
   return (
-    <div className="p-3">
-      <div className="w-full md:w-8/12 m-auto py-5">
-        <div className="my-5">
-          <h1 className="text-3xl font-bold mb-2">
-            Tell us your travel preferences 🏕️🌴
-          </h1>
-          <p className="text-xl text-gray-500">
-            Just provide some basic information, and our trip planner will
-            generate a customized itinerary based on your preferences.
-          </p>
-        </div>
-        <div className="mt-16">
-          <div className="pt-10 relative">
-            <h2 className="text-xl my-3 font-semibold">
-              What is your destination of choice?
-            </h2>
-
-            <Input
-              type="text"
-              placeholder="Type your destination here..."
-              className="border-2"
-              value={place}
-              onChange={handlePlaceChange}
-            />
-
-            {/* Suggestion Dropdown */}
-            {suggestions.length > 0 && (
-              <ul className="absolute bg-white border mt-1 w-full z-10 shadow-md">
-                {suggestions.map((suggestion, index) => (
-                  <li
-                    key={index}
-                    className="p-2 cursor-pointer hover:bg-gray-100"
-                    onClick={() => handleSelectSuggestion(suggestion)}
-                  >
-                    {suggestion.display_name}
-                  </li>
-                ))}
-              </ul>
-            )}
+    <>
+      <Header setDialog={setDialog} />
+      <div className="p-6 bg-gray-100 min-h-screen">
+        <div className="max-w-3xl mx-auto bg-white shadow-lg rounded-lg p-8 mt-16">
+          <div className="text-center mb-10">
+            <h1 className="text-4xl font-extrabold text-gray-800 mb-3">
+              Plan Your Dream Trip
+            </h1>
+            <p className="text-lg text-gray-600">
+              Provide some details about your trip, and we’ll craft a customized
+              itinerary just for you.
+            </p>
           </div>
 
-          <div className="pt-5">
-            <h2 className="text-xl my-3 font-semibold">
-              How many days are you planning your trip?{" "}
+          <div className="mb-8">
+            <h2 className="text-2xl font-semibold mb-3">
+              Where are you going?
             </h2>
+            <div className="relative">
+              <Input
+                type="text"
+                placeholder="Enter destination"
+                className="border rounded-md w-full px-4 py-2"
+                value={place}
+                onChange={handlePlaceChange}
+              />
+              {suggestions.length > 0 && (
+                <ul className="absolute bg-white border rounded-md mt-1 w-full shadow-lg z-10">
+                  {suggestions.map((suggestion, index) => (
+                    <li
+                      key={index}
+                      className="p-3 cursor-pointer hover:bg-gray-200"
+                      onClick={() => handleSelectSuggestion(suggestion)}
+                    >
+                      {suggestion.display_name}
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          </div>
 
+          <div className="mb-8">
+            <h2 className="text-2xl font-semibold mb-3">
+              How many days are you planning for your trip?
+            </h2>
             <Input
               type="number"
-              placeholder="Type trip day.."
-              className="border-2"
+              placeholder="Number of days"
+              className="border rounded-md w-full px-4 py-2"
               value={day}
               onChange={(e) => setDay(Number(e.target.value))}
             />
           </div>
 
-          <div className="pt-10">
-            <h2 className="text-xl my-3 font-semibold">What is Your Budget?</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+          <div className="mb-8">
+            <h2 className="text-2xl font-semibold mb-3">Select Your Budget</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {SelectBudgetOptions.map((option) => (
                 <div
                   key={option.id}
-                  className={`bg-white shadow-md p-6 rounded-sm border-2 hover:border-gray-800 ${
-                    option.id === budget?.id ? "border-gray-800" : ""
-                  }`}
+                  className={`p-6 rounded-lg border-2 cursor-pointer text-center ${
+                    option.id === budget?.id
+                      ? "border-purple-600"
+                      : "border-gray-300"
+                  } hover:border-purple-600 transition`}
                   onClick={() => setBudget(option)}
                 >
-                  <span className="text-2xl">{option.icon}</span>
-                  <h2 className="text-xl font-semibold my-2">{option.title}</h2>
-                  <p className="text-sm text-gray-500">{option.desc}</p>
+                  <div className={`text-4xl mb-3 ${option.color}`}>
+                    {option.icon}
+                  </div>
+                  <h3 className="text-xl font-semibold mb-2">{option.title}</h3>
+                  <p className="text-gray-600">{option.desc}</p>
                 </div>
               ))}
             </div>
           </div>
 
-          <div className="pt-16">
-            <h2 className="text-xl my-5 font-semibold">
-              Who do you plan on traveling with on your next adventure?
+          <div className="mb-8">
+            <h2 className="text-2xl font-semibold mb-3">
+              Who are you traveling with?
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {SelectTravelList.map((option) => (
                 <div
                   key={option.id}
+                  className={`p-6 rounded-lg border-2 cursor-pointer text-center ${
+                    option.id === people?.id
+                      ? "border-purple-600"
+                      : "border-gray-300"
+                  } hover:border-purple-600 transition`}
                   onClick={() => setPeople(option)}
-                  className={`bg-white shadow-md p-6 rounded-sm border-2 hover:border-gray-800 ${
-                    option.id === people?.id ? "border-gray-800" : ""
-                  }`}
                 >
-                  <span className="text-2xl">{option.icon}</span>
-                  <h2 className="text-xl font-semibold my-2">{option.title}</h2>
-                  <p className="text-sm text-gray-500">{option.desc}</p>
+                  <div className={`text-4xl mb-3 ${option.color}`}>
+                    {option.icon}
+                  </div>
+                  <h3 className="text-xl font-semibold mb-2">{option.title}</h3>
+                  <p className="text-gray-600">{option.desc}</p>
                 </div>
               ))}
             </div>
           </div>
 
-          <div className="flex justify-center pt-10">
-            <Button onClick={handleTripData}>Generate Trip</Button>
+          <div className="flex justify-center">
+            <Button
+              className="px-8 py-3 font-semibold bg-purple-600 text-white rounded-md hover:bg-purple-700"
+              onClick={handleTripData}
+            >
+              Generate My Trip
+            </Button>
           </div>
         </div>
+
+        <DialogPopup dialog={dialog} login={login} />
       </div>
-      <DialogPopup dialog={dialog} login={login} />
-    </div>
+    </>
   );
 };
 

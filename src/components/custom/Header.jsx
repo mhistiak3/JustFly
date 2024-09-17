@@ -1,57 +1,70 @@
-import React, { useState } from "react";
-import { Button } from "../ui/button";
+import { useState } from "react";
 import { Link } from "react-router-dom";
+import { FcGoogle } from "react-icons/fc"; // Google icon
+import { FaMapMarkedAlt } from "react-icons/fa"; // Trip icon
+import { HiOutlineMenuAlt3, HiX } from "react-icons/hi"; // Hamburger and close icons
 
-const Header = () => {
+const Header = ({ setDialog }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
-    <nav className="bg-purple-700 text-white shadow-md">
-      <div className="container mx-auto flex justify-between items-center py-4 px-5 md:px-0">
+    <nav className="fixed w-full z-50 bg-gradient-to-r from-purple-700 via-indigo-700 to-purple-700 bg-opacity-90 shadow-lg">
+      <div className="container mx-auto flex justify-between items-center py-4 px-6">
+        {/* Logo */}
         <Link to="/" className="flex items-center gap-3">
-          <img src="/logo.png" alt="logo" width="40" />{" "}
-          <span className="text-2xl font-semibold">JustFly</span>
+          <img
+            src="/logo.png"
+            alt="logo"
+            className="w-10 h-10 object-cover rounded-full shadow-md"
+          />
+          <span className="text-2xl font-bold text-white tracking-wide">
+            JustFly
+          </span>
         </Link>
 
-        {/* Mobile Hamburger Icon */}
+        {/* Desktop Links */}
+        <div className="hidden md:flex space-x-6 items-center">
+          {/* Google Sign-In Button */}
+          <button
+            className="flex items-center bg-white text-gray-700 font-semibold px-4 py-2 rounded-full shadow-md hover:bg-gray-100 transition-transform transform hover:scale-105"
+            onClick={() => setDialog(true)}
+          >
+            <FcGoogle className="mr-2 text-2xl" />
+            Google Sign In
+          </button>
+          {/* Create Trip Button */}
+          <Link to="/create-trip">
+            <button className="flex items-center bg-purple-600 text-white font-semibold px-4 py-2 rounded-full shadow-md hover:bg-purple-500 transition-transform transform hover:scale-105">
+              <FaMapMarkedAlt className="mr-2 text-lg" />
+              Create Trip
+            </button>
+          </Link>
+        </div>
+
+        {/* Mobile Hamburger */}
         <button
-          className="block md:hidden text-white focus:outline-none"
+          className="md:hidden flex items-center text-white text-3xl"
           onClick={() => setIsMenuOpen(!isMenuOpen)}
         >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-6 w-6"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d={
-                isMenuOpen ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16M4 18h16"
-              }
-            />
-          </svg>
+          {isMenuOpen ? <HiX /> : <HiOutlineMenuAlt3 />}
         </button>
-
-        {/* Desktop Menu */}
-        <div className="hidden md:flex items-center space-x-4">
-          <Button className="hover:bg-purple-600 transition-all">
-            Sign In
-          </Button>
-          <Button className="hover:bg-purple-600 transition-all">
-            Sign Up
-          </Button>
-        </div>
       </div>
 
       {/* Mobile Menu */}
       {isMenuOpen && (
-        <div className="md:hidden flex flex-col items-center space-y-4 py-4 bg-purple-800">
-          <Button className="w-10/12">Sign In</Button>
-          <Button className="w-10/12">Sign Up</Button>
+        <div className="md:hidden flex flex-col items-center space-y-4 py-6 bg-purple-700 bg-opacity-95">
+          {/* Google Sign-In Button */}
+          <button className="flex items-center bg-white text-gray-700 font-semibold px-4 py-2 rounded-full shadow-md hover:bg-gray-100 transition-transform transform hover:scale-105">
+            <FcGoogle className="mr-2 text-2xl" />
+            Google Sign In
+          </button>
+          {/* Create Trip Button */}
+          <Link to="/create-trip">
+            <button className="flex items-center bg-purple-600 text-white font-semibold px-4 py-2 rounded-full shadow-md hover:bg-purple-500 transition-transform transform hover:scale-105">
+              <FaMapMarkedAlt className="mr-2 text-lg" />
+              Create Trip
+            </button>
+          </Link>
         </div>
       )}
     </nav>
