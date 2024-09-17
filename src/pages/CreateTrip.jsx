@@ -1,10 +1,14 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { SelectBudgetOptions, SelectTravelList } from "@/contents/options";
+import {
+  AI_PROMPT,
+  SelectBudgetOptions,
+  SelectTravelList,
+} from "@/contents/options";
 import { useState } from "react";
 import axios from "axios";
 import { toast } from "sonner";
-
+import { chatSession } from "@/services/AiModel";
 
 const CreateTrip = () => {
   const [place, setPlace] = useState("");
@@ -12,7 +16,7 @@ const CreateTrip = () => {
   const [people, setPeople] = useState({});
   const [budget, setBudget] = useState({});
   const [suggestions, setSuggestions] = useState([]); // For storing location suggestions
-  const [selectedPlace, setSelectedPlace] = useState(null); // For storing the selected place
+  const [selectedPlace, setSelectedPlace] = useState(place); // For storing the selected place
 
   // Handle input change and fetch location suggestions
   const handlePlaceChange = async (e) => {
@@ -42,7 +46,7 @@ const CreateTrip = () => {
   };
 
   const handleTripData = () => {
-    if (!selectedPlace) {
+    if (!place) {
       return toast("Please select a valid destination.");
     }
     if (day > 7 || day < 1) {
@@ -59,18 +63,28 @@ const CreateTrip = () => {
     generateTrip();
   };
 
-  const generateTrip = () => {
+  const generateTrip = async () => {
     const tripObj = {
       location: selectedPlace,
       days: day,
       travelers: people.people,
       budget: budget.title,
     };
-    console.log(tripObj);
+    const finalPrompt = AI_PROMPT.replace("{location}", selectedPlace)
+      .replace("{day}", day)
+      .replace("{traveler}", people?.people)
+      .replace("{budget}", budget?.title)
+      .replace("{day}", day);
+    const response = await chatSession.sendMessage(finalPrompt);
+    
+
+    console.log(response?.response?.text());
   };
+
 
   return (
     <div className="p-3">
+    
       <div className="w-full md:w-8/12 m-auto py-5">
         <div className="my-5">
           <h1 className="text-3xl font-bold mb-2">
