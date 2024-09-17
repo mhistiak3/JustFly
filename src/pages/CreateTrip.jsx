@@ -3,13 +3,14 @@ import { Input } from "@/components/ui/input";
 import { SelectBudgetOptions, SelectTravelList } from "@/contents/options";
 import { useState } from "react";
 import axios from "axios";
+import { toast } from "sonner";
+
 
 const CreateTrip = () => {
   const [place, setPlace] = useState("");
   const [day, setDay] = useState(0);
   const [people, setPeople] = useState({});
   const [budget, setBudget] = useState({});
-  const [error, setError] = useState("");
   const [suggestions, setSuggestions] = useState([]); // For storing location suggestions
   const [selectedPlace, setSelectedPlace] = useState(null); // For storing the selected place
 
@@ -42,16 +43,16 @@ const CreateTrip = () => {
 
   const handleTripData = () => {
     if (!selectedPlace) {
-      return setError("Please select a valid destination.");
+      return toast("Please select a valid destination.");
     }
     if (day > 7 || day < 1) {
-      return setError("Please select a valid number of days (1 to 7).");
+      return toast("Please select a valid number of days (1 to 7).");
     }
     if (!people.id) {
-      return setError("Please select who you will be traveling with.");
+      return toast("Please select who you will be traveling with.");
     }
     if (!budget.id) {
-      return setError("Please select a budget.");
+      return toast("Please select a budget.");
     }
 
     // If all validations pass
@@ -164,7 +165,7 @@ const CreateTrip = () => {
             </div>
           </div>
 
-          <div className="flex justify-end pt-10">
+          <div className="flex justify-center pt-10">
             <Button onClick={handleTripData}>Generate Trip</Button>
           </div>
         </div>
