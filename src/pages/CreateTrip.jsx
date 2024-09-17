@@ -1,9 +1,11 @@
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { SelectBudgetOptions, SelectTravelList } from "@/contents/options";
 import { useState } from "react";
 
 const CreateTrip = () => {
   const [place, setPlace] = useState("");
-  const [day, setDay] = useState('');
+  const [day, setDay] = useState("");
   return (
     <div className="p-3">
       <div className="w-full md:w-8/12 m-auto py-5">
@@ -18,7 +20,7 @@ const CreateTrip = () => {
         </div>
 
         <div className="mt-24">
-          <div className="my-10">
+          <div className="pt-10">
             <h2 className="text-xl my-3 font-semibold">
               What is destination of choice?
             </h2>
@@ -31,7 +33,8 @@ const CreateTrip = () => {
               onChange={(e) => setPlace(e.target.value)}
             />
           </div>
-          <div className="my-10">
+
+          <div className="pt-5">
             <h2 className="text-xl my-3 font-semibold">
               How many days are you planning your trip?{" "}
             </h2>
@@ -44,6 +47,46 @@ const CreateTrip = () => {
               onChange={(e) => setDay(e.target.value)}
             />
           </div>
+
+          <div className="pt-10">
+            <h2 className="text-xl my-3 font-semibold">What is Your Budget?</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+              {SelectBudgetOptions.map((option) => (
+                <div
+                  key={option.id}
+                  className="bg-white shadow-md p-6 rounded-sm border-2 hover:border-gray-800"
+                >
+                  <span className="text-2xl">{option.icon}</span>
+                  <h2 className="text-xl font-semibold my-2">{option.title}</h2>
+                  <p className="text-sm text-gray-500">{option.desc}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="pt-16">
+            <h2 className="text-xl my-5 font-semibold">
+              Who do you plan on traveling with on your next adventure?
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+              {SelectTravelList.map((option) => (
+                <div
+                  key={option.id}
+                  className="bg-white shadow-md p-6 rounded-sm border-2 hover:border-gray-800"
+                >
+                  <span className="text-2xl">{option.icon}</span>
+                  <h2 className="text-xl font-semibold my-2">{option.title}</h2>
+                  <p className="text-sm text-gray-500">{option.desc}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+        <div className="flex justify-end pt-10">
+          <Button >
+            Generate Trip
+          </Button>
+        </div>
         </div>
       </div>
     </div>
