@@ -4,18 +4,17 @@ import { Link } from "react-router-dom";
 
 const Home = () => {
   return (
-    <div className="w-full h-[calc(100vh-75px)]  px-3 bg-gradient-to-br from-purple-400 via-purple-600 to-purple-800">
-      <div className="w-full xl:w-6/12 m-auto xl:py-24 py-20 flex flex-col items-center justify-center">
-        <h1 className="text-2xl md:text-4xl text-center p-5 font-semibold bg-purple-700 text-white rounded-sm mb-3">
-          Discover Your Next Adventure with AI: Personalized Itineraries at Your
-          Fingertips
+    <div className="min-h-screen flex items-center justify-center px-5 bg-gradient-to-br from-purple-500 via-purple-700 to-purple-900">
+      <div className="w-full max-w-3xl text-center space-y-6">
+        <h1 className="text-3xl md:text-5xl font-bold text-white leading-tight shadow-md">
+          Discover Your Next Adventure with AI
         </h1>
-        <p className="text-center py-3 text-md  md:text-xl mb-3 text-white">
+        <p className="text-lg md:text-2xl text-gray-200 shadow-lg">
           Your personal trip planner and travel curator, creating custom
           itineraries tailored to your interests and budget.
         </p>
         <Link to={"/create-trip"}>
-          <Button className="bg-white text-gray-700 hover:bg-slate-300 font-semibold">
+          <Button className="mt-4 bg-white text-gray-800 hover:bg-gray-300 hover:shadow-lg transition-all font-semibold py-3 px-6 rounded-lg">
             Get Started, it's free
           </Button>
         </Link>

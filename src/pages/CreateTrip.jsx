@@ -9,8 +9,11 @@ import { useState } from "react";
 import axios from "axios";
 import { toast } from "sonner";
 import { chatSession } from "@/services/AiModel";
+import DialogPopup from "@/components/custom/Dialog";
+import { useGoogleLogin } from "@react-oauth/google";
 
 const CreateTrip = () => {
+  const [dialog, setDialog] = useState(false);
   const [place, setPlace] = useState("");
   const [day, setDay] = useState(0);
   const [people, setPeople] = useState({});
@@ -63,28 +66,55 @@ const CreateTrip = () => {
     generateTrip();
   };
 
+  // Login User
+  const login = useGoogleLogin({
+    clientId: import.meta.env.VITE_GOOGLE_AUTH_CLIENT_ID,
+    onSuccess: (codeRes) => {
+      getUserProfile(codeRes)
+    },
+    onError: (error) => {
+      console.log(error);
+    },
+  });
+
+  // Get User Info
+  const getUserProfile = (tokenInfo) => {
+    axios
+      .get(
+        `https://www.googleapis.com/oauth2/v1/userinfo?access_token=${tokenInfo?.access_token}`,
+        {
+          headers: {
+            Authorization: "Bearer ${tokenInfo?.access_token}",
+            Accept: "Application/json",
+          },
+        }
+      )
+      .then((res) => {
+        localStorage.setItem("user",JSON.stringify(res.data))
+        generateTrip()
+        setDialog(false)
+      });
+  };
+  // generate trip
   const generateTrip = async () => {
-    const tripObj = {
-      location: selectedPlace,
-      days: day,
-      travelers: people.people,
-      budget: budget.title,
-    };
+    let user = localStorage.getItem("user");
+    if (!user) {
+      setDialog(true);
+      return;
+    }
+
     const finalPrompt = AI_PROMPT.replace("{location}", selectedPlace)
       .replace("{day}", day)
       .replace("{traveler}", people?.people)
       .replace("{budget}", budget?.title)
       .replace("{day}", day);
     const response = await chatSession.sendMessage(finalPrompt);
-    
 
-    console.log(response?.response?.text());
+    console.log(JSON.parse(response?.response?.text()));
   };
-
 
   return (
     <div className="p-3">
-    
       <div className="w-full md:w-8/12 m-auto py-5">
         <div className="my-5">
           <h1 className="text-3xl font-bold mb-2">
@@ -184,6 +214,7 @@ const CreateTrip = () => {
           </div>
         </div>
       </div>
+      <DialogPopup dialog={dialog} login={login} />
     </div>
   );
 };
