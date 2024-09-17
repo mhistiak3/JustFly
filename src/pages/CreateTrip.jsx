@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import {
   AI_PROMPT,
   SelectBudgetOptions,
@@ -12,7 +13,8 @@ import { chatSession } from "@/services/AiModel";
 import DialogPopup from "@/components/custom/Dialog";
 import { useGoogleLogin } from "@react-oauth/google";
 import Header from "@/components/custom/Header";
-
+import { doc, setDoc } from "firebase/firestore";
+import { db } from "@/services/FirebaseConfig";
 
 const CreateTrip = () => {
   const [dialog, setDialog] = useState(false);
@@ -22,6 +24,7 @@ const CreateTrip = () => {
   const [budget, setBudget] = useState({});
   const [suggestions, setSuggestions] = useState([]);
   const [selectedPlace, setSelectedPlace] = useState(place);
+  const [loading, setLoading] = useState(false);
 
   const handlePlaceChange = async (e) => {
     const input = e.target.value;
@@ -91,6 +94,7 @@ const CreateTrip = () => {
   };
 
   const generateTrip = async () => {
+    setLoading(true);
     let user = localStorage.getItem("user");
     if (!user) {
       setDialog(true);
@@ -104,7 +108,32 @@ const CreateTrip = () => {
       .replace("{day}", day);
 
     const response = await chatSession.sendMessage(finalPrompt);
-    console.log(JSON.parse(response?.response?.text()));
+    setLoading(false);
+    svaeTripData(JSON.parse(response?.response?.text()));
+  };
+
+  const svaeTripData = async (tripData) => {
+    try {
+      setLoading(true);
+      const userSelection = {
+        location: place,
+        people: people.people,
+        budget: budget.title,
+        day,
+      };
+      const docId = Date.now().toString();
+      const user = JSON.parse(localStorage.getItem("user"));
+      await setDoc(doc(db, "AiTrip", docId), {
+        userSelection,
+        tripData,
+        userEmail: user?.email,
+        id: docId,
+      });
+      setLoading(false);
+    } catch (error) {
+      setLoading(false);
+      toast(error.message);
+    }
   };
 
   return (
@@ -213,15 +242,16 @@ const CreateTrip = () => {
 
           <div className="flex justify-center">
             <Button
+              disabled={loading}
               className="px-8 py-3 font-semibold bg-purple-600 text-white rounded-md hover:bg-purple-700"
               onClick={handleTripData}
             >
-              Generate My Trip
+              {loading ? <AiOutlineLoading3Quarters /> : "Generate My Trip"}
             </Button>
           </div>
         </div>
 
-        <DialogPopup dialog={dialog} login={login} />
+        <DialogPopup dialog={dialog} login={login} loading={loading} />
       </div>
     </>
   );

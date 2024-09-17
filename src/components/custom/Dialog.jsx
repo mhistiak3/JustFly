@@ -8,7 +8,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog.jsx";
 
-export default function DialogPopup({ dialog, login }) {
+export default function DialogPopup({ dialog, login, loading }) {
   return (
     <Dialog open={dialog}>
       <DialogContent className="sm:max-w-[425px]">
@@ -23,7 +23,7 @@ export default function DialogPopup({ dialog, login }) {
         </DialogHeader>
 
         <DialogFooter>
-          <Button className="w-full" onClick={login}>
+          <Button className="w-full" onClick={login} disabled={loading}>
             Sign In with google
           </Button>
         </DialogFooter>
