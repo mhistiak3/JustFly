@@ -6,6 +6,7 @@ import { HiOutlineMenuAlt3, HiX } from "react-icons/hi"; // Hamburger and close 
 
 const Header = ({ setDialog }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const user = localStorage.getItem("user")
 
   return (
     <nav className="fixed w-full z-50 bg-gradient-to-r from-purple-700 via-indigo-700 to-purple-700 bg-opacity-90 shadow-lg">
@@ -25,13 +26,18 @@ const Header = ({ setDialog }) => {
         {/* Desktop Links */}
         <div className="hidden md:flex space-x-6 items-center">
           {/* Google Sign-In Button */}
-          <button
-            className="flex items-center bg-white text-gray-700 font-semibold px-4 py-2 rounded-full shadow-md hover:bg-gray-100 transition-transform transform hover:scale-105"
-            onClick={() => setDialog(true)}
-          >
-            <FcGoogle className="mr-2 text-2xl" />
-            Google Sign In
-          </button>
+          {user ? (
+            ""
+          ) : (
+            <button
+              className="flex items-center bg-white text-gray-700 font-semibold px-4 py-2 rounded-full shadow-md hover:bg-gray-100 transition-transform transform hover:scale-105"
+              onClick={() => setDialog(true)}
+            >
+              <FcGoogle className="mr-2 text-2xl" />
+              Google Sign In
+            </button>
+          )}
+
           {/* Create Trip Button */}
           <Link to="/create-trip">
             <button className="flex items-center bg-purple-600 text-white font-semibold px-4 py-2 rounded-full shadow-md hover:bg-purple-500 transition-transform transform hover:scale-105">

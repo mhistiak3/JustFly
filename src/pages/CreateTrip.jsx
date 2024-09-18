@@ -243,16 +243,19 @@ const CreateTrip = () => {
           <div className="flex justify-center">
             <Button
               disabled={loading}
-              className="px-8 py-3 font-semibold bg-purple-600 text-white rounded-md hover:bg-purple-700"
+              className="px-8 py-3 font-semibold bg-purple-600 text-white rounded-lg shadow-lg"
               onClick={handleTripData}
             >
-              {loading ? <AiOutlineLoading3Quarters /> : "Generate My Trip"}
+              {loading ? (
+                <AiOutlineLoading3Quarters className="animate-spin text-2xl" />
+              ) : (
+                "Generate Trip"
+              )}
             </Button>
           </div>
         </div>
-
-        <DialogPopup dialog={dialog} login={login} loading={loading} />
       </div>
+      <DialogPopup dialog={dialog} setDialog={setDialog} login={login} />
     </>
   );
 };
