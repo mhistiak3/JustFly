@@ -1,6 +1,5 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import App from "./App.jsx";
 import "./index.css";
 import {
   createBrowserRouter,
@@ -11,6 +10,7 @@ import {
 import Layout from "./components/Layout.jsx";
 import Home from "./pages/Home.jsx";
 import CreateTrip from "./pages/CreateTrip.jsx";
+import ViewTrip from "./pages/ViewTrip.jsx";
 
 
 const router = createBrowserRouter(
@@ -18,14 +18,15 @@ const router = createBrowserRouter(
     <Route path="/" element={<Layout />}>
       <Route path="" element={<Home />} />
       <Route path="create-trip" element={<CreateTrip />} />
+      <Route path="view-trip/:tripId" element={<ViewTrip />} />
     </Route>
   )
 );
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <RouterProvider router={router}>
-      <App />
-    </RouterProvider>
+    <RouterProvider router={router}/>
+     
+
   </StrictMode>
 );

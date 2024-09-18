@@ -15,6 +15,7 @@ import { useGoogleLogin } from "@react-oauth/google";
 import Header from "@/components/custom/Header";
 import { doc, setDoc } from "firebase/firestore";
 import { db } from "@/services/FirebaseConfig";
+import { useNavigate } from "react-router-dom";
 
 const CreateTrip = () => {
   const [dialog, setDialog] = useState(false);
@@ -25,6 +26,7 @@ const CreateTrip = () => {
   const [suggestions, setSuggestions] = useState([]);
   const [selectedPlace, setSelectedPlace] = useState(place);
   const [loading, setLoading] = useState(false);
+  const router = useNavigate();
 
   const handlePlaceChange = async (e) => {
     const input = e.target.value;
@@ -129,7 +131,10 @@ const CreateTrip = () => {
         userEmail: user?.email,
         id: docId,
       });
+      console.log(tripData);
+      
       setLoading(false);
+      router("/view-trip/" + docId);
     } catch (error) {
       setLoading(false);
       toast(error.message);
