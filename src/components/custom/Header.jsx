@@ -27,9 +27,12 @@ const Header = ({ setDialog }) => {
         <div className="hidden md:flex space-x-6 items-center">
           {/* Google Sign-In Button */}
           {user ? (
-            <button className="flex items-center bg-white text-gray-700 font-semibold px-4 py-2 rounded-full shadow-md hover:bg-gray-100 transition-transform transform hover:scale-105">
-              Your all trip
-            </button>
+            <Link
+              to="/all-trip"
+              className="flex items-center bg-white text-gray-700 font-semibold px-4 py-2 rounded-full shadow-md hover:bg-gray-100 transition-transform transform hover:scale-105"
+            >
+              Your All trip
+            </Link>
           ) : (
             <button
               className="flex items-center bg-white text-gray-700 font-semibold px-4 py-2 rounded-full shadow-md hover:bg-gray-100 transition-transform transform hover:scale-105"
@@ -63,9 +66,12 @@ const Header = ({ setDialog }) => {
         <div className="md:hidden flex flex-col items-center space-y-4 py-6 bg-purple-700 bg-opacity-95">
           {/* Google Sign-In Button */}
           {user ? (
-            <button className="flex items-center bg-white text-gray-700 font-semibold px-4 py-2 rounded-full shadow-md hover:bg-gray-100 transition-transform transform hover:scale-105">
+            <Link
+              to="/all-trip"
+              className="flex items-center bg-white text-gray-700 font-semibold px-4 py-2 rounded-full shadow-md hover:bg-gray-100 transition-transform transform hover:scale-105"
+            >
               Your All Trip
-            </button>
+            </Link>
           ) : (
             <button
               className="flex items-center bg-white text-gray-700 font-semibold px-4 py-2 rounded-full shadow-md hover:bg-gray-100 transition-transform transform hover:scale-105"

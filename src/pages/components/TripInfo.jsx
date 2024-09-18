@@ -8,7 +8,7 @@ const TripInfo = ({ trip }) => {
   return (
     <div className="my-5">
       <img
-        src="/placeholder.png"
+        src="/banner.jpg"
         alt="placeholder"
         className="w-full h-[350px] object-cover rounded-lg"
       />

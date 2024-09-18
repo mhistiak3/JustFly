@@ -32,7 +32,7 @@ const ViewTrip = () => {
       setLoading(false);
     }
   };
-console.log(trip);
+
 
   useEffect(() => {
     getTripData();

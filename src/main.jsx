@@ -11,6 +11,7 @@ import Layout from "./components/Layout.jsx";
 import Home from "./pages/Home.jsx";
 import CreateTrip from "./pages/CreateTrip.jsx";
 import ViewTrip from "./pages/ViewTrip.jsx";
+import AllTrip from "./pages/components/AllTrip";
 
 
 const router = createBrowserRouter(
@@ -19,6 +20,7 @@ const router = createBrowserRouter(
       <Route path="" element={<Home />} />
       <Route path="create-trip" element={<CreateTrip />} />
       <Route path="view-trip/:tripId" element={<ViewTrip />} />
+      <Route path="all-trip" element={<AllTrip />} />
     </Route>
   )
 );
