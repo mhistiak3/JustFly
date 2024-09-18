@@ -2,13 +2,13 @@ import Header from "@/components/custom/Header";
 import { db } from "@/services/FirebaseConfig";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
 const AllTrip = () => {
   const [allTripData, setAllTripData] = useState(null);
   const [loading, setLoading] = useState(false);
-
+const navigaet = useNavigate();
  const getAllTripData = async () => {
    try {
      let user = JSON.parse(localStorage.getItem("user"));
@@ -31,6 +31,7 @@ const AllTrip = () => {
 
      if (querySnapshot.empty) {
        toast("No trip found.");
+      
      } else {
        // Extract data from the querySnapshot
        const trips = querySnapshot.docs.map((doc) => ({
@@ -40,6 +41,7 @@ const AllTrip = () => {
        setAllTripData(trips);
      }
    } catch (error) {
+     navigaet("/");
      toast("Error fetching trip data.");
      console.error(error);
    } finally {

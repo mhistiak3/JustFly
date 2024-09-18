@@ -7,7 +7,11 @@ import { HiOutlineMenuAlt3, HiX } from "react-icons/hi"; // Hamburger and close 
 const Header = ({ setDialog }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const user = localStorage.getItem("user");
-
+   
+  const userLogout = () => {
+    localStorage.removeItem("user");
+    location.reload()
+  };
   return (
     <nav className="fixed w-full z-50 bg-gradient-to-r from-purple-700 via-indigo-700 to-purple-700 bg-opacity-90 shadow-lg">
       <div className="container mx-auto flex justify-between items-center py-4 px-6">
@@ -31,7 +35,7 @@ const Header = ({ setDialog }) => {
               to="/all-trip"
               className="flex items-center bg-white text-gray-700 font-semibold px-4 py-2 rounded-full shadow-md hover:bg-gray-100 transition-transform transform hover:scale-105"
             >
-              Your All trip
+              Your All Trip
             </Link>
           ) : (
             <button
@@ -50,6 +54,17 @@ const Header = ({ setDialog }) => {
               Create Trip
             </button>
           </Link>
+          {/* Create Trip Button */}
+          {user ? (
+            <button
+              className="flex items-center bg-purple-600 text-white font-semibold px-4 py-2 rounded-full shadow-md hover:bg-purple-500 transition-transform transform hover:scale-105"
+              onClick={userLogout}
+            >
+              Logout
+            </button>
+          ) : (
+            ""
+          )}
         </div>
 
         {/* Mobile Hamburger */}
@@ -88,6 +103,16 @@ const Header = ({ setDialog }) => {
               Create Trip
             </button>
           </Link>
+          {user ? (
+            <button
+              className="flex items-center bg-purple-600 text-white font-semibold px-4 py-2 rounded-full shadow-md hover:bg-purple-500 transition-transform transform hover:scale-105"
+              onClick={userLogout}
+            >
+              Logout
+            </button>
+          ) : (
+            ""
+          )}
         </div>
       )}
     </nav>

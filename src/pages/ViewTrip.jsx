@@ -16,6 +16,12 @@ const ViewTrip = () => {
 
   const getTripData = async () => {
     setLoading(true);
+     let user = JSON.parse(localStorage.getItem("user"));
+
+     // Check if user exists
+     if (!user || !user.email) {
+      navigate('/')
+     }
     try {
       const docRef = doc(db, "AiTrip", tripId);
       const docSnap = await getDoc(docRef);
