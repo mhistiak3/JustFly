@@ -57,7 +57,10 @@ console.log(trip);
           <HotelInfo hotels={trip?.tripData?.hotels} />
 
           {/* Trip Day info */}
-          <ItineraryInfo itinerary={trip?.tripData?.itinerary} />
+          <ItineraryInfo
+            itinerary={trip?.tripData?.itinerary}
+            selection={trip?.userSelection}
+          />
         </div>
       </div>
     </>

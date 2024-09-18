@@ -1,8 +1,18 @@
+import { getImage } from "@/services/GlobalAPI";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
 const HotelInfo = ({ hotels }) => {
+  const [images, setImage] = useState([]);
+  async function imageFetch(name) {
+    const data = await getImage(name, "hotel");
+    const results = data?.data?.results;
+    setImage(results);
+  }
+  useEffect(() => {
+    imageFetch(hotels[0]["Hotel address"]);
+  },[]);
 
-console.log(hotels);
 
   return (
     <div className="pt-5">
@@ -14,10 +24,10 @@ console.log(hotels);
               to={`https://www.google.com/maps?q=${hotel["HotelName"]},${hotel["Hotel address"]}`}
             >
               <img
-                src={hotel["hotel image url"]}
+                src={images[index]?.links?.download}
                 onError={(e) => (e.target.src = "/placeholder.png")}
                 alt=""
-                className="rounded-lg object-cover h-[200px]"
+                className="rounded-lg object-cover h-[200px] w-full"
               />
               <h3 className="text-[18px] font-medium mt-2 mb-1">
                 {hotel?.HotelName}

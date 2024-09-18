@@ -1,13 +1,23 @@
-import React from "react";
-import { FaMapMarkerAlt, FaTicketAlt, FaClock, FaStar } from "react-icons/fa";
+import { getImage } from "@/services/GlobalAPI";
+import React, { useEffect, useState } from "react";
+import {  FaTicketAlt, FaClock, FaStar } from "react-icons/fa";
 
-const ItineraryInfo = ({ itinerary }) => {
+const ItineraryInfo = ({ itinerary, selection }) => {
+  const [images, setImage] = useState([]);
+  async function imageFetch(name) {
+    const data = await getImage(name, "hotel");
+    const results = data?.data?.results;
+    setImage(results);
+  }
+  useEffect(() => {
+    imageFetch(selection.location);
+  }, []);
   return (
     <div className="pt-16 px-4 md:px-8">
       <h2 className="text-2xl font-bold text-gray-900 mb-6">Places to Visit</h2>
       <div className="py-5">
-        {itinerary.map((itina, index) => (
-          <div className="mb-10" key={index}>
+        {itinerary.map((itina, index1) => (
+          <div className="mb-10" key={index1}>
             <h3 className="text-xl font-semibold text-gray-800 mb-2">
               Day: {itina.Day}
             </h3>
@@ -26,10 +36,10 @@ const ItineraryInfo = ({ itinerary }) => {
                     className="shadow-sm bg-white border-2 border-gray-200 flex rounded-lg overflow-hidden transition-shadow duration-300 hover:shadow-lg"
                   >
                     <img
-                      src={place["Place Image Url"]}
+                      src={images[index + index1]?.links?.download}
                       onError={(e) => (e.target.src = "/placeholder.png")}
                       alt={place.PlaceName}
-                      className="w-[240px] h-60 object-cover"
+                      className="w-[250px] h-[280px] object-cover"
                     />
                     <div className="p-5">
                       <h4 className="font-semibold text-[18px] text-gray-800 mb-2">
@@ -41,15 +51,13 @@ const ItineraryInfo = ({ itinerary }) => {
                       <ul className="space-y-2">
                         <li className="text-sm text-gray-700 flex items-center">
                           <FaClock className="text-purple-500 mr-2" />
-                          <span className="font-semibold mr-1">
-                            Travel Time:{" "}
-                          </span>
+                          <span className="font-semibold mr-1">Time: </span>
                           {place["Time travel"]}
                         </li>
                         <li className="text-sm text-gray-700 flex items-center">
                           <FaTicketAlt className="text-purple-500 mr-2" />
                           <span className="font-semibold mr-1">
-                            Ticket Pricing:{" "}
+                            Pricing:{" "}
                           </span>{" "}
                           {place["ticket Pricing"]}
                         </li>
