@@ -19,7 +19,8 @@ const Home = () => {
             Plan Your Dream Trip with AI
           </h1>
           <p className="text-lg md:text-2xl text-gray-200 mb-8">
-            Let AI customize your itineraries to fit your passions and budget.
+            Let AI customize your itineraries and trip to fit your passions and budget.
+
           </p>
           <Link to={"/create-trip"}>
             <Button className="bg-white text-purple-700 font-semibold px-6 py-3 rounded-lg shadow-lg hover:bg-gray-200 transition transform hover:scale-105">
